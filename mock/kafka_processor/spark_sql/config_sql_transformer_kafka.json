@@ -1,21 +1,21 @@
 {
   "aws_region": "us-east-1",
   "environment": "dev",
-  "logger_name": "utility_kafka_spark_sql_security_log_processor_logger",
-  "processor_typ": "utility_kafka_spark_sql_security_log_processor_processor",
+  "logger_name": "some_logger",
+  "processor_typ": "some_processor_typ",
   "input": {
     "reader_typ": "message_broker_kafka",
     "format": "json",
-    "secret_name": "dev/cs_ise/kafka",
+    "secret_name": "...",
     "format_options": {
-      "kafka.bootstrap.servers": "b-1.tls.mskclusterdev.soxbku.c16.kafka.us-east-1.amazonaws.com:14001",
+      "kafka.bootstrap.servers": "...",
       "kafka.security.protocol": "SSL",
-      "subscribe": "context-service-dev-utility-raw-feed",
-      "kafka.ssl.keystore.location": "/var/.jks/cs-ise-transformer.keystore.jks",
-      "kafka.ssl.keystore.password": "CS_KAFKA_KEYSTORE_PSSWD",
-      "kafka.ssl.truststore.location": "/var/.jks/cs-ise-transformer.truststore.jks",
-      "kafka.ssl.truststore.password": "CS_KAFKA_TRUSTSTORE_PSSWD",
-      "kafka.ssl.key.password": "CS_KAFKA_SSL_KEY_PSSWD",
+      "subscribe": "...",
+      "kafka.ssl.keystore.location": "/var/.jks/**.keystore.jks",
+      "kafka.ssl.keystore.password": "...",
+      "kafka.ssl.truststore.location": "/var/.jks/**.truststore.jks",
+      "kafka.ssl.truststore.password": "...",
+      "kafka.ssl.key.password": "...",
       "startingOffsets": "latest",
       "failOnDataLoss": "false"
     },
@@ -74,7 +74,7 @@
         "transform_output": {
           "config_output_table": "1_transform_output"
         },
-        "transform_query": "/Volumes/cspe_context_service_dev/ise_context/data_processor/configs/1_cleanse_normalise_log_events.sql"
+        "transform_query": "/Volumes/.../1_cleanse_normalise_log_events.sql"
       },
       {
         "transform_typ": "sql",
@@ -86,32 +86,32 @@
         "transform_output": {
           "config_output_table": "2_transform_output"
         },
-        "transform_query": "/Volumes/cspe_context_service_dev/ise_context/data_processor/configs/2_transform_log_events.sql"
+        "transform_query": "/Volumes/.../2_transform_log_events.sql"
       }
     ],
     "output": "final_output"
   },
   "output": {
     "writer_typ": "message_broker_kafka",
-    "secret_name": "dev/cs_ise/kafka",
+    "secret_name": "...",
     "outputMode": "append",
     "stream_options": {
-      "checkpointLocation": "/Volumes/cspe_context_service_dev/ise_context/data_processor/checkpoint/"
+      "checkpointLocation": "/Volumes/.../data_processor/checkpoint/"
     },
     "writer_typ_options": {
-      "kafka.bootstrap.servers": "b-1.tls.mskclusterdev.soxbku.c16.kafka.us-east-1.amazonaws.com:14001",
+      "kafka.bootstrap.servers": "...",
       "kafka.security.protocol": "SSL",
-      "topic": "context-service-dev-utility-output-feed",
-      "kafka.ssl.keystore.location": "/var/.jks/cs-ise-transformer.keystore.jks",
-      "kafka.ssl.keystore.password": "CS_KAFKA_KEYSTORE_PSSWD",
-      "kafka.ssl.truststore.location": "/var/.jks/cs-ise-transformer.truststore.jks",
-      "kafka.ssl.truststore.password": "CS_KAFKA_TRUSTSTORE_PSSWD",
-      "kafka.ssl.key.password": "CS_KAFKA_SSL_KEY_PSSWD",
+      "topic": "...",
+      "kafka.ssl.keystore.location": "/var/.jks/**.keystore.jks",
+      "kafka.ssl.keystore.password": "...",
+      "kafka.ssl.truststore.location": "/var/.jks/**.truststore.jks",
+      "kafka.ssl.truststore.password": "...",
+      "kafka.ssl.key.password": "...",
       "startingOffsets": "latest"
     }
   },
   "metric" : {
-    "namespace": "utility_kafka_spark_sql_security_log_processor",
+    "namespace": "some_namespace",
     "metric_set": {
       "microbatch_time": {
         "typ": "gauge",

@@ -1,15 +1,15 @@
 {
   "aws_region": "us-west-2",
   "environment": "dev",
-  "logger_name": "aws_s3_to_s3_json_processor_logger",
-  "processor_typ": "AWS_S3_TO_S3_JSON",
+  "logger_name": "some_logger",
+  "processor_typ": "some_processor_type",
   "input": {
     "reader_typ": "file_system",
-    "sourcePath": "s3://pps-dev-stream-processor/input_data/json/",
+    "sourcePath": "s3://.../input_data/json/",
     "format": "json",
     "filePattern": "data-*.json",
     "format_options": {
-      "maxFilesPerTrigger": 100,
+      "maxFilesPerTrigger": 1000,
       "multiLine": true
     },
     "schema": {
@@ -65,7 +65,7 @@
         "transform_output": {
           "config_output_table": "1_transform_output"
         },
-        "transform_query": "/Volumes/cspe_context_service_dev/ise_context/data_processor/configs/sql/json/flatten_input_fields.sql"
+        "transform_query": "/Volumes/.../flatten_input_fields.sql"
       },
       {
         "transform_typ": "sql",
@@ -77,18 +77,18 @@
         "transform_output": {
           "config_output_table": "2_transform_output"
         },
-        "transform_query": "/Volumes/cspe_context_service_dev/ise_context/data_processor/configs/sql/json/minor_transformation_flatten_fields.sql"
+        "transform_query": "/Volumes/.../minor_transformation_flatten_fields.sql"
       }
     ],
     "output": "final_output"
   },
   "output": {
     "writer_typ": "file_system",
-    "targetPath": "s3://pps-dev-stream-processor/output_data/json/",
+    "targetPath": "s3://.../output_data/json/",
     "format": "json",
     "outputMode": "append",
     "stream_options": {
-      "checkpointLocation": "/Volumes/cspe_context_service_dev/ise_context/data_processor/checkpoint/"
+      "checkpointLocation": "/Volumes/.../checkpoint/"
     },
     "partitionBy": [],
     "writer_typ_options": {
@@ -96,7 +96,7 @@
     }
   },
   "metric" : {
-    "namespace": "utility_kafka_pyspark_security_log_processor",
+    "namespace": "some_namespace",
     "metric_set": {
       "microbatch_time": {
         "typ": "gauge",
