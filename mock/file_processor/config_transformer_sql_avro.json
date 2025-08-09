@@ -1,0 +1,139 @@
+{
+  "aws_region": "us-west-2",
+  "environment": "dev",
+  "logger_name": "aws_s3_to_s3_avro_processor_logger",
+  "processor_typ": "AWS_S3_TO_S3_AVRO",
+  "input": {
+    "reader_typ": "file_system",
+    "sourcePath": "s3://pps-dev-stream-processor/input_data/avro/",
+    "format": "avro",
+    "filePattern": "data-*.avro",
+    "format_options": {
+      "maxFilesPerTrigger": 100
+    },
+    "schema": {
+      "type": "record",
+      "name": "UserActivity",
+      "fields": [
+        {
+          "name": "timestamp",
+          "type": "string"
+        },
+        {
+          "name": "user_id",
+          "type": "string"
+        },
+        {
+          "name": "activity_type",
+          "type": "string"
+        },
+        {
+          "name": "user_profile",
+          "type": {
+            "type": "record",
+            "name": "UserProfile",
+            "fields": [
+              {
+                "name": "name",
+                "type": "string"
+              },
+              {
+                "name": "email",
+                "type": "string"
+              },
+              {
+                "name": "address",
+                "type": {
+                  "type": "record",
+                  "name": "Address",
+                  "fields": [
+                    {
+                      "name": "street",
+                      "type": "string"
+                    },
+                    {
+                      "name": "city",
+                      "type": "string"
+                    },
+                    {
+                      "name": "zip_code",
+                      "type": "string"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "transform": {
+    "input": "raw_input",
+    "conversion": [
+      {
+        "transform_typ": "sql",
+        "transform_seq": "1",
+        "transform_name": "flatten_input_fields",
+        "transform_input": {
+          "config_input_table_1": "raw_input"
+        },
+        "transform_output": {
+          "config_output_table": "1_transform_output"
+        },
+        "transform_query": "/Volumes/cspe_context_service_dev/ise_context/data_processor/configs/sql/avro/flatten_input_fields.sql"
+      },
+      {
+        "transform_typ": "sql",
+        "transform_seq": "2",
+        "transform_name": "re_arrange_to_struct_fields",
+        "transform_input": {
+          "config_input_table_1": "1_transform_output"
+        },
+        "transform_output": {
+          "config_output_table": "2_transform_output"
+        },
+        "transform_query": "/Volumes/cspe_context_service_dev/ise_context/data_processor/configs/sql/avro/re_arrange_to_struct_fields.sql"
+      }
+    ],
+    "output": "final_output"
+  },
+  "output": {
+    "writer_typ": "file_system",
+    "targetPath": "s3://pps-dev-stream-processor/output_data/avro/",
+    "format": "avro",
+    "outputMode": "append",
+    "stream_options": {
+      "checkpointLocation": "/Volumes/cspe_context_service_dev/ise_context/data_processor/checkpoint/"
+    },
+    "partitionBy": [],
+    "writer_typ_options": {}
+  },
+  "metric" : {
+    "namespace": "utility_kafka_pyspark_security_log_processor",
+    "metric_set": {
+      "microbatch_time": {
+        "typ": "gauge",
+        "custom_metric_name": "metric_microbatch_total_time"
+      },
+      "microbatch_transformation_time": {
+        "typ": "gauge",
+        "custom_metric_name": "metric_microbatch_transformation_time"
+      },
+      "microbatch_writer_time": {
+        "typ": "gauge",
+        "custom_metric_name": "metric_microbatch_writer_time"
+      },
+      "microbatch_writer_record_count": {
+        "typ": "gauge",
+        "custom_metric_name": "metric_microbatch_write_record_count"
+      },
+      "microbatch_record_count": {
+        "typ": "counter",
+        "custom_metric_name": "metric_microbatch_total_record_count"
+      }
+    },
+    "flush_interval": 30,
+    "flush_batch_size": 50
+  }
+}

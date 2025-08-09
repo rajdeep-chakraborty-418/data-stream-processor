@@ -1,0 +1,103 @@
+"""
+Writer Message Broker Kafka format wise
+"""
+# pylint: disable=pointless-string-statement
+# pylint: disable=import-error
+
+
+from src.main.enum.writer_type import (
+    WriterType,
+)
+from src.main.utils.aws_utils.secret_utils import (
+    SecretUtils,
+)
+from src.main.utils.constants import (
+    NODE_OUTPUT_OUTPUT_MODE,
+    NODE_OUTPUT_WRITER_TYP_OPTIONS,
+    NODE_OUTPUT_STREAM_OPTIONS,
+    NODE_OUTPUT_GEN_WRITER_TYP,
+    NODE_OUTPUT_GEN_WRITER_ALL_OPTIONS,
+    NODE_OUTPUT_GEN_OUTPUT_MODE,
+    NODE_OUTPUT_GEN_WRITE_OPTIONS,
+    NODE_OUTPUT_GEN_STREAM_OPTIONS,
+    NODE_OUTPUT_KAFKA_SECRET_NAME,
+    NODE_LOGGER_NAME,
+    NODE_AWS_REGION,
+    NODE_OUTPUT_FORMAT_GEN_OPTIONS_KAFKA_BOOTSTRAP_SERVER,
+    NODE_OUTPUT_FORMAT_OPTIONS_KAFKA_BOOTSTRAP_SERVER,
+    NODE_OUTPUT_FORMAT_GEN_OPTIONS_KAFKA_SECURITY_PROTOCOL,
+    NODE_OUTPUT_FORMAT_OPTIONS_KAFKA_SECURITY_PROTOCOL,
+    NODE_OUTPUT_FORMAT_GEN_OPTIONS_KAFKA_SOURCE_TOPIC,
+    NODE_OUTPUT_FORMAT_OPTIONS_KAFKA_SOURCE_TOPIC,
+    NODE_OUTPUT_FORMAT_GEN_OPTIONS_KAFKA_SECRET_KEY_STORE_JKS,
+    NODE_OUTPUT_FORMAT_GEN_OPTIONS_KAFKA_SECRET_KEY_STORE_PASSWORD,
+    NODE_OUTPUT_FORMAT_OPTIONS_KAFKA_SECRET_KEY_STORE_JKS,
+    NODE_OUTPUT_FORMAT_OPTIONS_KAFKA_SECRET_KEY_STORE_PASSWORD,
+    NODE_OUTPUT_FORMAT_GEN_OPTIONS_KAFKA_SECRET_TRUST_STORE_JKS,
+    NODE_OUTPUT_FORMAT_OPTIONS_KAFKA_SECRET_TRUST_STORE_JKS,
+    NODE_OUTPUT_FORMAT_GEN_OPTIONS_KAFKA_SECRET_TRUST_STORE_PASSWORD,
+    NODE_OUTPUT_FORMAT_OPTIONS_KAFKA_SECRET_TRUST_STORE_PASSWORD,
+    NODE_OUTPUT_FORMAT_GEN_OPTIONS_KAFKA_SECRET_STARTING_OFFSET,
+    NODE_OUTPUT_FORMAT_OPTIONS_KAFKA_SECRET_STARTING_OFFSET,
+    NODE_OUTPUT_FORMAT_OPTIONS_KAFKA_SECRET_SSL_KEY_PASSWORD,
+    NODE_OUTPUT_FORMAT_GEN_OPTIONS_KAFKA_SECRET_SSL_KEY_PASSWORD,
+)
+
+
+# pylint: disable=pointless-string-statement
+# pylint: disable=line-too-long
+# pylint: disable=import-error
+
+def writer_message_broker_kafka_params(config: dict) -> dict:
+    """
+    Get the message broker kafka writer Parameters for the given configuration.
+    :param config:
+    :return:
+    """
+    secret_name: str = config[NODE_OUTPUT_KAFKA_SECRET_NAME]
+    """
+    Get the secret from AWS Secrets Manager
+    """
+    secret_instance = SecretUtils(
+        region_name=config[NODE_AWS_REGION],
+        logger=config[NODE_LOGGER_NAME],
+    )
+    secret = secret_instance.get_secret(
+        secret_name=secret_name,
+    )
+    output_mode: str = config[NODE_OUTPUT_OUTPUT_MODE]
+    writer_type_options: dict = config[NODE_OUTPUT_WRITER_TYP_OPTIONS]
+    stream_options: dict = config[NODE_OUTPUT_STREAM_OPTIONS]
+    """
+    Format for Message Broker Kafka Writer Options Compatible for writing
+    """
+    broker_options: dict = {
+        NODE_OUTPUT_FORMAT_GEN_OPTIONS_KAFKA_BOOTSTRAP_SERVER: writer_type_options[NODE_OUTPUT_FORMAT_OPTIONS_KAFKA_BOOTSTRAP_SERVER],
+        NODE_OUTPUT_FORMAT_GEN_OPTIONS_KAFKA_SECURITY_PROTOCOL: writer_type_options[NODE_OUTPUT_FORMAT_OPTIONS_KAFKA_SECURITY_PROTOCOL],
+        NODE_OUTPUT_FORMAT_GEN_OPTIONS_KAFKA_SOURCE_TOPIC: writer_type_options[NODE_OUTPUT_FORMAT_OPTIONS_KAFKA_SOURCE_TOPIC],
+        NODE_OUTPUT_FORMAT_GEN_OPTIONS_KAFKA_SECRET_KEY_STORE_JKS: writer_type_options[NODE_OUTPUT_FORMAT_OPTIONS_KAFKA_SECRET_KEY_STORE_JKS],
+        NODE_OUTPUT_FORMAT_GEN_OPTIONS_KAFKA_SECRET_TRUST_STORE_JKS: writer_type_options[NODE_OUTPUT_FORMAT_OPTIONS_KAFKA_SECRET_TRUST_STORE_JKS],
+        NODE_OUTPUT_FORMAT_GEN_OPTIONS_KAFKA_SECRET_STARTING_OFFSET: writer_type_options[NODE_OUTPUT_FORMAT_OPTIONS_KAFKA_SECRET_STARTING_OFFSET],
+        NODE_OUTPUT_FORMAT_GEN_OPTIONS_KAFKA_SECRET_TRUST_STORE_PASSWORD: secret[
+            writer_type_options[NODE_OUTPUT_FORMAT_OPTIONS_KAFKA_SECRET_TRUST_STORE_PASSWORD]
+        ],
+        NODE_OUTPUT_FORMAT_GEN_OPTIONS_KAFKA_SECRET_SSL_KEY_PASSWORD: secret[
+            writer_type_options[NODE_OUTPUT_FORMAT_OPTIONS_KAFKA_SECRET_SSL_KEY_PASSWORD]
+        ],
+        NODE_OUTPUT_FORMAT_GEN_OPTIONS_KAFKA_SECRET_KEY_STORE_PASSWORD: secret[
+            writer_type_options[NODE_OUTPUT_FORMAT_OPTIONS_KAFKA_SECRET_KEY_STORE_PASSWORD]
+        ]
+    }
+    """
+    Unified Parse Options for Message Broker Kafka Writer
+    """
+    parse_options: dict = {
+        NODE_OUTPUT_GEN_WRITER_TYP: WriterType.MESSAGE_BROKER_KAFKA.value,
+        NODE_OUTPUT_GEN_WRITER_ALL_OPTIONS: {
+            NODE_OUTPUT_GEN_OUTPUT_MODE: output_mode,
+            NODE_OUTPUT_GEN_WRITE_OPTIONS: broker_options,
+        },
+        NODE_OUTPUT_GEN_STREAM_OPTIONS: stream_options,
+    }
+
+    return parse_options
