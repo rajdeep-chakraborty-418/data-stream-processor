@@ -1,5 +1,6 @@
 # "Bring Your Own Config" Feature
 
+* Reusable Pyspark Based Utility To Module To Enrich Business Logic for Real Time Streaming Application
 * Utility Module provides a set of helpful functions and tools
 * Easily extended with custom configurations
 * Allows users to bring their own business logic as part of config
