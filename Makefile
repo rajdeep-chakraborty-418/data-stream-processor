@@ -9,6 +9,12 @@ CMD_PYLINT_OPTIONS = --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] 
 CMD_PYTEST_OPTIONS = -ra -vv --tb=short --cache-clear --color=yes --show-capture=no --strict-markers
 COVERAGE_THRESHOLD = 90
 
+setup:
+	python3 -m pip install --upgrade pip
+	python3 -m pip install --upgrade setuptools
+	python3 -m pip install --upgrade wheel
+	python3 -m pip install -r requirements.txt
+
 unit_test:
 	python3 -m pytest -vv -s --cache-clear test/main/*
 
@@ -25,3 +31,7 @@ wheel:
 	python3 setup.py bdist_wheel
 
 build: unit_test lint lint coverage coverage_report wheel
+
+construct_wheel:
+	@chmod +x ./construct_wheel.sh
+	@sh ./construct_wheel.sh

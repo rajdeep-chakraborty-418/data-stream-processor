@@ -1,0 +1,48 @@
+name: Build Artifact on Merge
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set Up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Setup Environment
+        run: |
+          make setup
+
+      - name: Install Wheel
+        run: |
+          make build
+
+      - name: Get wheel Name
+        id: wheel-info
+        run: |
+          WHEEL_NAME=$(make construct_wheel)
+          echo "wheel_name=${WHEEL_NAME}" >> $GITHUB_OUTPUT
+          echo "wheel_path=dist/${WHEEL_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Verify Wheel
+        run: |
+          if [ ! -f "${{ steps.wheel-info.outputs.WHEEL_PATH }}" ]; then
+            echo "Wheel file Not Found At ${{ steps.wheel-info.outputs.WHEEL_PATH }}"
+            ls -la dist/
+            exit 1
+          fi
+
+      - name: Upload Wheel As Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.wheel-info.outputs.name }}-wheel
+          path: ${{ steps.wheel-info.outputs.WHEEL_PATH }}
