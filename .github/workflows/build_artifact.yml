@@ -42,7 +42,7 @@ jobs:
           fi
 
       - name: Upload Wheel As Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.wheel-info.outputs.name }}-wheel
           path: ${{ steps.wheel-info.outputs.WHEEL_PATH }}
